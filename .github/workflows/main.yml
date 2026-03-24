@@ -4,16 +4,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Extract project
         run: |
-          # Распаковываем то, что прислал твой Python-скрипт
           unzip -o project.zip -d .
-          ls -R # Посмотрим в логах, что внутри
+          ls -R
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -21,12 +20,11 @@ jobs:
       - name: Install Buildozer
         run: |
           sudo apt update
-          sudo apt install -y python3-pip build-essential git libssl-dev libffi-dev python3-dev libgimpprint-dev
+          sudo apt install -y python3-pip build-essential git libssl-dev libffi-dev python3-dev
           pip3 install --user --upgrade buildozer Cython==0.29.33
 
-      - name: Create spec if not exists
+      - name: Create spec
         run: |
-          # Если файла настроек нет, создаем его на лету
           if [ ! -f buildozer.spec ]; then
             buildozer init
             sed -i 's/package.name = myapp/package.name = lopuhapp/' buildozer.spec
@@ -35,11 +33,10 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          # Собираем APK
           yes | buildozer android debug
 
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: LOPUH_READY_APK
+          name: MY_FINISHED_APK
           path: bin/*.apk
